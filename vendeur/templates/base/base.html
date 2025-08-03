@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}PharmaShop{% endblock %}</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- Les css -->
+  {% block style %}{% endblock %}
+  
+
+  {% block extra_css %}{% endblock %}
+  <style>
+    /* Style actif par défaut (clair) */
+  .nav-link.active {
+    font-weight: bold;
+    color: #0d6efd !important; /* bleu Bootstrap */
+  }
+
+  /* Mode sombre (si body a la classe "dark-mode") */
+  body.dark-mode .nav-link.active {
+    color: #66b2ff !important; /* bleu plus clair pour contraste */
+    background-color: rgba(255, 255, 255, 0.1); /* léger fond */
+    border-radius: 5px;
+  }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+  <div class="container">
+    <a class="navbar-brand text-primary" href="{% url 'accueil' %}"><i class="bi bi-capsule me-1"></i>BeckyPharma</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'accueil' %}active{% endif %}" href="{% url 'accueil' %}">Accueil</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'produits' %}active{% endif %}" href="{% url 'produits' %}">Produits</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'ordonnances' %}active{% endif %}" href="#">Ordonnances</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'apropos' %}active{% endif %}" href="#">À propos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="#">Contact</a>
+        </li>
+      </ul>
+
+      <!-- Bouton Déconnexion -->
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        Se déconnecter
+      </button>
+
+      <!-- SWITCH THEME -->
+      <button id="themeToggle" class="btn btn-outline-dark ms-3" title="Changer de thème">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+      </button>
+
+      <!-- PANIER -->
+      <a href="#" class="btn btn-outline-primary position-relative ms-2" data-bs-toggle="modal" data-bs-target="#cartModal">
+        <i class="bi bi-cart3"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Main content -->
+<main class="container mt-5">
+  
+
+  <!-- deuxième message -->
+  {% if messages %}
+    <div class="position-fixed" style="z-index: 9999">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            Le produit : <b>{{ message }}</b> 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+  {% block content %}
+  <!-- Contenu spécifique à chaque page ici -->
+  {% endblock %}
+</main>
+
+
+<!-- Modal de confirmation de deconnexion -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">Confirmer la déconnexion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir vous déconnecter {{employe.prenom}} ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="{% url 'logout_employe' %}" class="btn btn-danger">Se déconnecter</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PANIER -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cartModalLabel">Votre panier</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Prix unitaire</th>
+              <th>Quantité</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rempli par JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer d-flex justify-content-between align-items-center">
+        <h5>Total: <span id="cartTotal">0 FC</span></h5>
+        <button type="button" class="btn btn-success" onclick="validerCommande()">Valider la commande</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- FOOTER -->
+<footer class="bg-primary text-white mt-5 py-4 text-center">
+  <div class="container">
+    <p class="mb-1">&copy; 2025 BeckyPharma. Tous droits réservés.</p>
+    <div>
+      <a href="#" class="text-white me-3"><i class="bi bi-facebook fs-4"></i></a>
+      <a href="#" class="text-white me-3"><i class="bi bi-twitter fs-4"></i></a>
+      <a href="#" class="text-white me-3"><i class="bi bi-instagram fs-4"></i></a>
+      <a href="#" class="text-white"><i class="bi bi-linkedin fs-4"></i></a>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal Déconnexion -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">Confirmer la déconnexion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir vous déconnecter ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="{% url 'logout_employe' %}" class="btn btn-danger">Se déconnecter</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- JS Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block scripts %} {% endblock %}
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

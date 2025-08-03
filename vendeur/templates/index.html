@@ -1,0 +1,420 @@
+<!-- index.html -->
+{% extends "base/base.html" %}
+{% load static %}
+
+
+  {% block style %}
+  <style>
+    body {
+      padding-top: 80px;
+      background-color: #f8f9fa;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .search-section {
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .search-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #0d6efd;
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .form-control-lg {
+      font-size: 1.25rem;
+      padding: 1rem 1.5rem;
+    }
+
+    .spinner-icon {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* --- Amélioration des .card-body --- */
+    .card-body p {
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .card-body p.fw-bold {
+      font-size: 1rem;
+      margin-top: 0.6rem;
+      color: #198754;
+    }
+
+    .card-body p.text-muted strong {
+      font-weight: 500;
+    }
+
+    /* -------- DARK MODE -------- */
+    body.dark-mode {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+
+    body.dark-mode .navbar,
+    body.dark-mode footer {
+      background-color: #121212 !important;
+      color: #f8f9fa !important;
+    }
+
+    body.dark-mode .navbar .nav-link,
+    body.dark-mode .navbar .navbar-brand {
+      color: #f8f9fa !important;
+    }
+
+    body.dark-mode .card {
+      background-color: #2c2f33;
+      color: #f8f9fa;
+      border: 1px solid #444;
+    }
+
+    body.dark-mode .card .btn {
+      border-color: #999;
+    }
+
+    body.dark-mode .filter-btn {
+      border-color: #ccc;
+      color: #ccc;
+    }
+
+    body.dark-mode .filter-btn.btn-primary {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+      color: #fff;
+    }
+
+    body.dark-mode .form-control {
+      background-color: #495057;
+      color: #f8f9fa;
+      border-color: #6c757d;
+    }
+
+    body.dark-mode .form-control:focus {
+      background-color: #495057;
+      color: #fff;
+    }
+
+    body.dark-mode .modal-content {
+      background-color: #2c2f33;
+      color: #f8f9fa;
+    }
+
+    body.dark-mode .modal-header,
+    body.dark-mode .modal-footer {
+      border-color: #555;
+    }
+
+    body.dark-mode .table {
+      color: #f8f9fa;
+    }
+
+    body.dark-mode .table th,
+    body.dark-mode .table td {
+      background-color: #2c2f33;
+      color: #f8f9fa;
+      border-top: 1px solid #555;
+    }
+
+    .modal-content .table th,
+    .modal-content .table td {
+      background-color: #fff;
+      color: #212529;
+      vertical-align: middle;
+      border-top: 1px solid #dee2e6;
+    }
+
+    body.dark-mode .btn-outline-secondary {
+      border-color: #aaa;
+      color: #aaa;
+    }
+
+    body.dark-mode .btn-outline-secondary:hover {
+      background-color: #aaa;
+      color: #212529;
+    }
+
+    body.dark-mode .btn-outline-dark {
+      border-color: #f8f9fa;
+      color: #f8f9fa;
+    }
+
+    body.dark-mode .btn-outline-dark:hover {
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    /* --- Amélioration lisibilité textes cartes en mode sombre --- */
+    body.dark-mode .card-body p {
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    body.dark-mode .card-body p.fw-bold {
+      color: #4ade80;
+      font-size: 1.05rem;
+    }
+
+    body.dark-mode .card-body p.text-muted,
+    body.dark-mode .card-body .text-muted {
+      color: #b0b0b0;
+      font-weight: 500;
+    }
+
+
+    body.dark-mode .card-body p.text-muted strong {
+      font-weight: 600;
+      color: #f0f0f0;
+    }
+
+
+    /* Amélioration lisibilité textes cartes en mode sombre */
+    body.dark-mode .card-body p {
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    body.dark-mode .card-body p.fw-bold {
+      color: #4ade80;
+      font-size: 1.05rem;
+    }
+
+    /* Ici, on cible aussi les spans ou autres éléments qui pourraient avoir text-muted */
+    body.dark-mode .card-body p.text-muted,
+    body.dark-mode .card-body .text-muted {
+      color: #b0b0b0 !important;
+      font-weight: 500;
+    }
+
+    body.dark-mode .card-body p.text-muted strong {
+      font-weight: 600;
+      color: #f0f0f0;
+    }
+
+  </style>
+  {% endblock %}
+
+
+</head>
+<body>
+
+  {% block content %}
+<!-- SECTION RECHERCHE -->
+<section class="search-section">
+  <h2 class="search-title"> {{employe.prenom}} ! Recherchez un produit pharmaceutique</h2>
+  <form class="search-box d-flex" onsubmit="event.preventDefault();">
+    <input class="form-control form-control-lg me-2" type="search" placeholder="Paracétamol, Doliprane, etc." aria-label="Rechercher" />
+    <button class="btn btn-primary btn-lg" type="submit">
+      <i class="bi bi-search"></i>
+    </button>
+  </form>
+  <div id="search-spinner" class="text-center mt-3" style="display: none;">
+    <i class="bi bi-arrow-repeat fs-3 text-primary spinner-icon"></i>
+  </div>
+</section>
+
+<!-- FILTRES -->
+<div class="text-center mt-4">
+  <button class="btn btn-outline-secondary me-2 filter-btn" onclick="filterByCategory('all')">Tous</button>
+  {% for cat in categories %}
+    <button class="btn btn-outline-secondary me-2 filter-btn" onclick="filterByCategory('{{ cat.nom|lower }}')">{{ cat.nom }}</button>
+  {% endfor %}
+</div>
+
+<!-- SECTION PRODUITS -->
+<section class="container mt-5">
+  <h3 class="mb-4 text-primary">Produits Stockés : {{produits.count}}</h3>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for produit in produits %}
+    <div class="col produit">
+      <div class="card h-100 shadow-sm" 
+          data-category="{{ produit.categorie.nom|lower }}" 
+          data-product-id="{{ produit.id }}">
+          
+        <img src="https://via.placeholder.com/300x180?text={{ produit.nom|urlencode }}" 
+            class="card-img-top" 
+            alt="{{ produit.nom }}" />
+
+        <div class="card-body">
+          <h5 class="card-title">{{ produit.nom }}</h5>
+          <p class="text-muted">{{ produit.description|default:"Pas de description" }}</p>
+          <p class="fw-bold text-success">{{ produit.prix_unitaire|floatformat:0 }} FC</p>
+
+          <p class="text-muted">
+            Stock restant : 
+            <strong class="stock-remaining">{{ produit.quantite_stock }}</strong>
+          </p>
+
+          <div class="input-group input-group-sm mb-3" style="max-width: 120px;">
+            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity(this)">–</button>
+            <input type="number" class="form-control text-center" value="1" min="1" />
+            <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity(this)">+</button>
+          </div>
+
+          <a href="#" 
+            class="btn btn-primary w-100 btn-add-to-cart" 
+            data-id="prod-{{ produit.id }}" 
+            data-nom="{{ produit.nom }}" 
+            data-prix="{{ produit.prix_unitaire|floatformat:0 }}">
+            <i class="bi bi-cart-plus"></i> Ajouter au panier
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="text-center mt-4">
+      <button id="voirPlus" class="btn btn-outline-primary">Afficher plus</button>
+    </div>
+  </div>
+
+  <p id="no-results-message" class="mt-4 text-muted text-center" style="display: none;">Aucun produit trouvé.</p>
+</section>
+
+
+
+
+<!-- Confirmation de vente -->
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+  <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        La vente éffectuée avec succès !
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+<!-- JS Bootstrap -->
+
+
+{% block scripts %}
+
+<script>
+  
+  function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
+
+function mettreAJourStocks(stocks) {
+  for (const produitId in stocks) {
+    const elementStock = document.querySelector(`.card[data-product-id="${produitId}"] .stock-remaining`);
+    if (elementStock) {
+      elementStock.textContent = stocks[produitId];
+    }
+  }
+}
+
+
+
+<!--  -->
+function updateCartCount() {
+  const count = Object.keys(cart).length;
+  const badge = document.querySelector('.btn-outline-primary .badge');
+  if (badge) badge.innerText = count;
+}
+
+
+function renderCartModal() {
+  const tbody = document.querySelector('#cartModal tbody');
+  tbody.innerHTML = '';
+  let total = 0;
+
+  for (const id in cart) {
+    const item = cart[id];
+    const itemTotal = item.quantite * item.prix;
+    total += itemTotal;
+
+    const row = `
+      <tr data-id="${id}">
+        <td>${item.nom}</td>
+        <td>${item.prix} FC</td>
+        <td><input type="number" class="quantite-input form-control form-control-sm text-center" value="${item.quantite}" min="1" onchange="updateCart('${id}', this.value)" /> </td>
+        <td>${itemTotal} FC</td>
+        <td><button class="btn btn-sm btn-danger" onclick="removeFromCart('${id}')">Supprimer</button></td>
+      </tr>
+    `;
+    tbody.innerHTML += row;
+  }
+
+  document.getElementById('cartTotal').innerText = `${total} FC`;
+}
+
+
+
+
+// Affichage des 15 produits
+document.addEventListener("DOMContentLoaded", function () {
+    const produits = document.querySelectorAll('.produit');
+    const boutonVoirPlus = document.getElementById('voirPlus');
+    const limiteParAffichage = 15;
+    let indexActuel = 0;
+
+    // Masquer tous les produits
+    produits.forEach(p => p.style.display = 'none');
+
+    // Fonction pour afficher les prochains produits
+    function afficherProchains() {
+      for (let i = indexActuel; i < indexActuel + limiteParAffichage && i < produits.length; i++) {
+        produits[i].style.display = 'block';
+      }
+      indexActuel += limiteParAffichage;
+
+      // Cacher le bouton si tous les produits sont affichés
+      if (indexActuel >= produits.length) {
+        boutonVoirPlus.style.display = 'none';
+      }
+    }
+
+    // Affichage initial
+    afficherProchains();
+
+    // Quand on clique sur "Voir plus"
+    boutonVoirPlus.addEventListener('click', afficherProchains);
+  });
+
+
+
+</script>
+
+
+<!-- Ton JS perso -->
+<script src="{% static 'js/scripts.js' %}"></script>
+
+{% endblock %}
+

@@ -1,0 +1,155 @@
+
+{% extends 'block/base.html' %}
+
+{% block title %}Dashboard - Pharma{% endblock %}
+
+{% block content %}
+{% load static %}
+
+  <div class="container mt-4">
+    <h3 class="mb-4 text-center text-primary fw-bold">Suivi financier des ventes et achats</h3>
+
+    <ul class="nav nav-tabs mb-4 justify-content-center" id="dateTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#today" type="button" role="tab" aria-selected="true" aria-controls="today">Aujourd'hui</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#yesterday" type="button" role="tab" aria-selected="false" aria-controls="yesterday">Hier</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#before" type="button" role="tab" aria-selected="false" aria-controls="before">Avant-hier</button></li>
+    </ul>
+
+    <div class="tab-content" id="dateTabsContent">
+
+    <!-- Aujourd'hui -->
+    <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="today-tab">
+      <h5 class="mb-3 text-center">Aujourd'hui</h5>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-cart-fill"></i>
+            <h5>Ventes</h5>
+            <p class="fw-bold text-success"> {{ total_today|floatformat:0 }} FC</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-box-seam"></i>
+            <h5>Achats</h5>
+            <p class="fw-bold text-danger">{{ total_achats_today|floatformat:0 }} FC</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-cash-coin"></i>
+            <h5>Bénéfice</h5>
+            <p class="fw-bold text-primary">Non géré !</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hier -->
+    <div class="tab-pane fade" id="yesterday" role="tabpanel" aria-labelledby="yesterday-tab">
+      <h5 class="mb-3 text-center">Hier</h5>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-cart-fill"></i>
+            <h5>Ventes</h5>
+            <p class="fw-bold text-success"> {{ total_yesterday|floatformat:0 }} FC</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-box-seam"></i>
+            <h5>Achats</h5>
+            <p class="fw-bold text-danger">{{ total_achats_yesterday|floatformat:0 }} FC</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-cash-coin"></i>
+            <h5>Bénéfice</h5>
+            <p class="fw-bold text-primary">Non géré !</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avant-hier -->
+    <div class="tab-pane fade" id="before" role="tabpanel" aria-labelledby="before-tab">
+      <h5 class="mb-3 text-center">Avant-hier</h5>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-cart-fill"></i>
+            <h5>Ventes</h5>
+            <p class="fw-bold text-success"> {{ total_2days|floatformat:0 }} FC</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-box-seam"></i>
+            <h5>Achats</h5>
+            <p class="fw-bold text-danger"> {% if total_achats_2day  %} {{ total_achats_2day|floatformat:0 }} FC {% else %} 0 FC {% endif %} </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="summary-box">
+            <i class="bi bi-cash-coin"></i>
+            <h5>Bénéfice</h5>
+            <p class="fw-bold text-primary">Non géré !</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+  </div>
+
+  
+  <hr class="my-5" />
+
+  <h4 class="text-center text-secondary mb-2">
+    <i class="bi bi-clock-history"></i> Historique des ventes mensuelles
+  </h4>
+
+  <!-- Légende juste sous le titre -->
+  <div class="mb-4 d-flex justify-content-center gap-4 align-items-center">
+    <div><span style="display:inline-block;width:20px;height:20px;background:#d9534f;border-radius:4px;"></span> 1<sup>er</sup> meilleur bénéfice</div>
+    <div><span style="display:inline-block;width:20px;height:20px;background:#f0ad4e;border-radius:4px;"></span> 2<sup>e</sup> meilleur bénéfice</div>
+    <div><span style="display:inline-block;width:20px;height:20px;background:#5bc0de;border-radius:4px;"></span> 3<sup>e</sup> meilleur bénéfice</div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white text-center">
+      <thead class="table-light">
+        <tr>
+          <th>Mois</th>
+          <th><i class="bi bi-cart-fill text-success"></i> Ventes</th>
+          <th><i class="bi bi-box-seam text-danger"></i> Achats</th>
+          <th><i class="bi bi-cash-coin text-primary"></i> Bénéfice</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mois in dix_derniers_mois %}
+        <tr>
+          <td>{{ mois.mois }}</td>
+          <td>{{ mois.total|floatformat:0 }} FC</td>
+          <td>{{ mois.total_achats|floatformat:0 }} FC</td>
+          <td class="fw-bold" style="color:#d9534f;">Non géré !</td> <!-- 1er -->
+        </tr>
+        {% empty %}
+          <tr><td colspan="2" class="text-center">Aucune donnée disponible</td></tr>
+        {% endfor %}
+        
+      </tbody>
+    </table>
+  </div>
+
+</div>
+<script src="{% static 'js/scripts.js' %}"></script>
+<script>
+  
+</script>
+
+  
+  {% endblock %}
