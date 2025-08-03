@@ -82,8 +82,21 @@ def calculer_total_achats(achats_queryset):
     total = achats_queryset.annotate(montant=montant_total_expr).aggregate(total=Sum('montant'))['total']
     return total or 0
 
-locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')  # Linux/mac
-locale.setlocale(locale.LC_TIME, 'fr_FR')      # Windows
+
+
+import locale
+
+# Tentative de définition du locale, fallback si non disponible (ex: Railway)
+try:
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')  # Linux/mac
+except locale.Error:
+    try:
+        locale.setlocale(locale.LC_TIME, 'fr_FR')    # Windows
+    except locale.Error:
+        # Dernier recours : locale par défaut "C" (ne traduit pas les mois)
+        locale.setlocale(locale.LC_TIME, 'C')
+
+
 
 @login_required(login_url='connexion_chef')
 def dashboard(request):

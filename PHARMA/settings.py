@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-import dj_database_url
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'insecure-dev-key')
-
 # SECRET_KEY = 'django-insecure-zk0yor%p+2t@r1p1l+-e^1-jc-vg(gg^tt+^#e7^786lk0#b%&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -32,7 +31,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-# ALLOWED_HOSTS=pharma.up.railway.app
+# ALLOWED_HOSTS=beckypharma.up.railway.app
 
 
 
@@ -88,11 +87,11 @@ WSGI_APPLICATION = 'PHARMA.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
+    # 'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
